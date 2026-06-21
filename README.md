@@ -1,6 +1,6 @@
 # GitStandup
 
-Daily standup bot powered by git. Enter a GitHub repo → get per-person summaries of what shipped, what's in progress, and what needs attention.
+Weekly standup bot powered by git. Enter a GitHub repo → get per-person summaries of what shipped, what's in progress, and what needs attention.
 
 ## How it works
 
@@ -58,23 +58,25 @@ GitStandup pulls ALL signals and lets the AI figure out what's meaningful.
 
 ### What's in scope
 - Public **and private** repos (via GitHub OAuth, scope `repo`)
+- Multi-repo standups — select up to 5 repos, activity merged per author
 - GitHub sign-in required to use the app
 - Per-author standup generation from PRs + issues + commits + reviews
+- Day-by-day calendar grid with expandable activity cells
 - Clean web UI with copy-to-clipboard
 - Graceful handling of empty repos, rate limits, repos you can't access
 
 ### What's out of scope (and why)
 - Custom GitHub App with fine-grained per-repo permissions — OAuth `repo` scope is simpler and sufficient for v1
 - Slack/Discord integration — shipping a working web app first
-- Multi-day trends — focused on "what happened in last 24h"
+- Multi-week trends — focused on "what happened this week"
 - Team analytics/metrics — scope creep
-- Custom date ranges — keep it simple, daily standup is the default
+- Custom date ranges — keep it simple, weekly standup is the default
 
 ### Assumptions I made
 - GitHub's authenticated rate limit (5,000 req/hr) is comfortable for personal/team use.
 - A fast, cheap summarization model is good enough for standups. A larger model would be better for very technical repos.
 - All-git workflow — if a team uses something external (Notion, Google Docs) for task tracking, we can't see it and the standup will be sparser.
-- Activity = merged/closed PRs and issues + commits. Opened-but-stale PRs are excluded.
+- Activity = PRs (open + merged/closed), issues, commits, and reviews updated within the 7-day window.
 
 ### Three questions I'd ask a real user
 1. "What do you actually say in your standup that git can't capture?" (mentoring, meetings, research spikes)
@@ -92,7 +94,7 @@ GitStandup pulls ALL signals and lets the AI figure out what's meaningful.
 2. Slack/Discord webhook to auto-post standup
 3. Custom prompts per team ("we focus on blockers, not task lists")
 4. "What I did yesterday" vs "What I'm doing today" split
-5. Multi-repo support for teams with monorepo setups
+5. Custom date range picker (currently fixed at 7 days)
 
 ## Deployment (Dokploy / Docker)
 
