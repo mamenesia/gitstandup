@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copy lockfile and manifest for deterministic install.
 COPY package.json package-lock.json* ./
-RUN npm ci --omit=optional
+RUN npm ci
 
 # ---- builder ----
 FROM node:22-alpine AS builder
