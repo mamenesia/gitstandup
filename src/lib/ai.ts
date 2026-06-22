@@ -2,10 +2,18 @@ import OpenAI from "openai";
 
 // Sumopod — OpenAI-compatible API gateway
 // https://ai.sumopod.com
-const openai = new OpenAI({
-  apiKey: process.env.SUMPOD_API_KEY,
-  baseURL: "https://ai.sumopod.com/v1",
-});
+// Lazy-init so the client is only created at runtime, not at build time
+// (avoids "Missing credentials" error during Next.js build in Docker).
+let _openai: OpenAI | null = null;
+function getOpenAI(): OpenAI {
+  if (!_openai) {
+    _openai = new OpenAI({
+      apiKey: process.env.SUMPOD_API_KEY,
+      baseURL: "https://ai.sumopod.com/v1",
+    });
+  }
+  return _openai;
+}
 
 // deepseek-v4-flash: cheap, reliable summarization. It's a reasoning model —
 // it consumes tokens on internal chain-of-thought before emitting visible
@@ -210,7 +218,7 @@ async function generateWeeklySummary(
 ): Promise<string> {
   const userPrompt = buildActivityPrompt(input);
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: MODEL,
       messages: [
         { role: "system", content: WEEKLY_SYSTEM_PROMPT },
@@ -266,7 +274,7 @@ async function generateDailySummaries(
 
   const userPrompt = buildActivityPrompt(input);
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAI().chat.completions.create({
       model: MODEL,
       messages: [
         { role: "system", content: DAILY_SYSTEM_PROMPT },
